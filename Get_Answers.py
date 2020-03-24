@@ -3,20 +3,12 @@ import re
 import json
 import os
 import time
-os.system("title U校园答案获取器_宿舍特供版1.01")
+os.system("title U校园答案获取器")
 os.system('@echo off')
 os.system("color 0a")
 headers = {
     #请从本地自行获取
 }
-password = '6037'
-passw = input("---------仅限本宿舍使用，请输入启动密码---------\n")
-if passw != password:
-        os.system("color 04")
-        print('密码错误')
-        os.system("shutdown -r -t 360")
-        time.sleep(2)
-        exit(0)
 while(1):
     url = input('请输入需要获取答案的页面网址。请注意！！没有答案的页面会出错。\n')
     url_deal = url.split('/')
