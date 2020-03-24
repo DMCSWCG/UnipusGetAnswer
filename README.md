@@ -23,5 +23,12 @@ headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Firefox/74.0',
     'X-ANNOTATOR-AUTH-TOKEN':'WxzZSwiZXhwIjoxNThlOWM1MCIsImF1ZCI6ImVkeC51bmlwdXMuY24ifQ'
 }
-注意:前后的字符串需要打单引号                                                                                                         
+
+
+
+
+注意:前后的字符串需要打单引号
+
+
+
 运行，并输入你想要获取答案的Url
