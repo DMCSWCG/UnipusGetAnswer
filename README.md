@@ -1,4 +1,4 @@
-# U_Learn_Answers_Get
+# Unipus_EnglishAnswer_Get
 自动获取U校园日常作业答案
 
 
@@ -35,3 +35,5 @@ headers = {
 
 
 仅测试了英语答案的获取，其他的答案获取暂未尝试
+
+本程序仅作为学习交流用途！！
