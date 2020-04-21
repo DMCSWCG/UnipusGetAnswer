@@ -19,7 +19,7 @@ def Xtoken_create():
     fake_id = ''.join(random.sample(['z','y','x','w','v','u','t','s','r','q','p','o','n','m','l','k','j','i','h','g','f','e','d','c','b','a','1','2','3','4','5','6','7','8','9'], 32))
     fake_iss = ''.join(random.sample(['z','y','x','w','v','u','t','s','r','q','p','o','n','m','l','k','j','i','h','g','f','e','d','c','b','a','1','2','3','4','5','6','7','8','9'], 20))
     token_body = {
-        "open_id":fake_id,"name":"","email":"","administrator":'false',"exp":1902970157000,"iss":'c4f772063dcfa98e9c50',"aud":"edx.unipus.cn"
+        "open_id":fake_id,"name":"","email":"","administrator":'false',"exp":1902970157000,"iss":fake_iss,"aud":"edx.unipus.cn"
     }
 
     token_header = {"typ":"JWT","alg":"HS256"}
