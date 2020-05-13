@@ -21,7 +21,6 @@ def Xtoken_create():
     token_body = {
         "open_id":fake_id,"name":"","email":"","administrator":'false',"exp":1902970157000,"iss":fake_iss,"aud":"edx.unipus.cn"
     }
-    #'c4f772063dcfa98e9c50'
     token_header = {"typ":"JWT","alg":"HS256"}
 
     jwt_token = jwt.encode(token_body,'',algorithm="HS256",headers=token_header).decode("utf-8")
@@ -47,11 +46,17 @@ def Request_get(requests_header,input_url):
     target_url = 'https://ucontent.unipus.cn/course/api/content/'+url_deal[5]+'/'+url_deal[-2]+'/default/'
     try : 
         rec_text = requests.get(target_url,headers = requests_header).text
-        answer_show(rec_text)
+        answer_sort = re.findall('content_(.*?):scoopquestions',rec_text)
+        answer_show(rec_text,answer_sort)
     except:
         print('网址输入错误')
 
-def answer_show(answers_text):
+def answer_show(answers_text,sort):
+    if len(sort) > 1:
+        print('\t该页有两题及以上答案，顺序为')
+        for i in sort:
+            print('\t    第'+i+'题')
+        print('\n请自行判断答案顺序！\n')
     pos = 1
     text_deal = re.findall(r"answers(.*?):\[(.*?)\],",answers_text)
     if text_deal :
@@ -65,7 +70,7 @@ def answer_show(answers_text):
     else:
         text_deal = word_2 = re.findall(r"answer(.*?):\[(.*?)\],",answers_text)
         if text_deal :
-            print("\t----获取成功！----\n")
+            print("\t  ----获取成功！---- \n")
             for word in text_deal:
                 word = str(word).replace(',',' ')
                 answers = "".join(re.findall(r"[A-Z0-9a-z -]",word))    
@@ -93,9 +98,8 @@ def input_check(url):
         
 
 if __name__ == "__main__":
-
+    answer_url = input('\n请输入需要获取答案的页面网址。请注意！！没有答案的页面会出错。\n')
     while(1):
-        answer_url = input('\n请输入需要获取答案的页面网址。请注意！！没有答案的页面会出错。\n')
         if input_check(answer_url) == 1 :
             os.system("cls")
             print("---------------------开始获取，请稍等！！-------------------------")
@@ -106,5 +110,6 @@ if __name__ == "__main__":
             print("输入网址有误！请重新输入！")
             time.sleep(0.2)
             os.system("cls")
+        answer_url = input('\n请输入需要获取答案的页面网址。请注意！！没有答案的页面会出错。\n')
         
         
