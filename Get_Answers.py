@@ -8,7 +8,7 @@ import jwt
 import fake_useragent
 
 
-os.system("title U校园答案获取器1.03")
+os.system("title U校园答案获取器1.1")
 os.system('@echo off')
 os.system("color 0a")
 
@@ -21,7 +21,7 @@ def Xtoken_create():
     token_body = {
         "open_id":fake_id,"name":"","email":"","administrator":'false',"exp":1902970157000,"iss":fake_iss,"aud":"edx.unipus.cn"
     }
-
+    #'c4f772063dcfa98e9c50'
     token_header = {"typ":"JWT","alg":"HS256"}
 
     jwt_token = jwt.encode(token_body,'',algorithm="HS256",headers=token_header).decode("utf-8")
@@ -53,20 +53,21 @@ def Request_get(requests_header,input_url):
 
 def answer_show(answers_text):
     pos = 1
-    text_deal = re.findall(r"answers.*?:.*?\"(.*?)\".*?,",answers_text)
+    text_deal = re.findall(r"answers(.*?):\[(.*?)\],",answers_text)
     if text_deal :
         print("\t----获取成功！----\n")
-
         for word in text_deal:
+            word = str(word).replace(',', ' ')
             answers = "".join(re.findall(r"[A-Z0-9a-z -]",word))    
             check_pos = answers
             print('\t    '+str(pos)+'题答案'+answers)
             pos = pos + 1
     else:
-        text_deal = re.findall(r"answer.*?:.*?\"(.*?)\".*?,",answers_text)
+        text_deal = word_2 = re.findall(r"answer(.*?):\[(.*?)\],",answers_text)
         if text_deal :
             print("\t----获取成功！----\n")
             for word in text_deal:
+                word = str(word).replace(',',' ')
                 answers = "".join(re.findall(r"[A-Z0-9a-z -]",word))    
                 check_pos = answers
                 print('\t    '+str(pos)+'题答案'+answers)
