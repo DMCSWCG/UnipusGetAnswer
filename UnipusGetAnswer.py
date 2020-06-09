@@ -42,15 +42,18 @@ requests_headers = {
 }
 
 def Request_get(requests_header,input_url):
-    url_deal = input_url.split('/')
-    target_url = 'https://ucontent.unipus.cn/course/api/content/'+url_deal[5]+'/'+url_deal[-2]+'/default/'
-    try : 
-        rec_text = requests.get(target_url,headers = requests_header).text
-        answer_sort = re.findall('content_(.*?):scoopquestions',rec_text)
-        answer_show(rec_text,answer_sort)
+    try:
+        url_deal = input_url.split('/')
+        target_url = 'https://ucontent.unipus.cn/course/api/content/'+url_deal[5]+'/'+url_deal[-2]+'/default/'
+        try : 
+            rec_text = requests.get(target_url,headers = requests_header).text
+            answer_sort = re.findall('content_(.*?):scoopquestions',rec_text)
+            answer_show(rec_text,answer_sort)
+        except:
+            print('网址输入错误')
     except:
-        print('网址输入错误')
-
+            print('网址输入错误')
+ 
 def answer_show(answers_text,sort):
     if len(sort) > 1:
         print('\t该页有两题及以上答案，顺序为')
