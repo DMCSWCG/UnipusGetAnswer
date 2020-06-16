@@ -37,11 +37,15 @@ requests_headers = {
 }
 
 def extract_qa(question_obj):
-    return (question_obj["content"]["html"], question_obj["answers"])
+    if "answer" in question_obj.keys():
+        return (question_obj["content"]["html"], question_obj["answer"])
+    elif "answers" in question_obj.keys():
+        return (question_obj["content"]["html"], question_obj["answers"])
 
 def Request_get(requests_header,input_url):
     url_deal = input_url.split('/')
     target_url = 'https://ucontent.unipus.cn/course/api/content/'+url_deal[5]+'/'+url_deal[-2]+'/default/'
+    content_obj = {}
     try : 
         rec_text = requests.get(target_url,headers = requests_header).text
         rec_obj = json.loads(rec_text)
@@ -49,10 +53,13 @@ def Request_get(requests_header,input_url):
         for (k, v) in sorted(content_obj.items()):
             for q in v["questions"]:
                 this_q, this_a = extract_qa(q)
-                this_q = this_q.replace("<strong>", "").replace("</strong>", "")
-                this_q = this_q.replace("<p>", "").replace("</p>", "")
+                # Remove HTML tags
+                this_q = re.sub('<[^<]+?>', '', this_q)
+                this_q = this_q.replace('\n', '').strip()
                 print(this_q, ":", this_a)
     except:
+        if content_obj:
+            print(json.dumps(content_obj, indent=2))
         print('网址输入错误')
 
 def answer_show(answers_text,sort):
