@@ -7,12 +7,13 @@ import random
 import jwt
 import fake_useragent
 
-Ua_list = fake_useragent.UserAgent()
 
+Ua_list = fake_useragent.UserAgent()
+seed_list = ['z','y','x','w','v','u','t','s','r','q','p','o','n','m','l','k','j','i','h','g','f','e','d','c','b','a','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q',"R",'S','T','U','V','W','X','Y','Z']
 def Xtoken_create():
     global token_create
-    fake_id = ''.join(random.sample(['z','y','x','w','v','u','t','s','r','q','p','o','n','m','l','k','j','i','h','g','f','e','d','c','b','a','1','2','3','4','5','6','7','8','9'], 32))
-    fake_iss = ''.join(random.sample(['z','y','x','w','v','u','t','s','r','q','p','o','n','m','l','k','j','i','h','g','f','e','d','c','b','a','1','2','3','4','5','6','7','8','9'], 20))
+    fake_id = ''.join(random.sample(seed_list, 32))
+    fake_iss = ''.join(random.sample(seed_list, 20))
     token_body = {
         "open_id":fake_id,"name":"","email":"","administrator":'false',"exp":1902970157000,"iss":fake_iss,"aud":"edx.unipus.cn"
     }
@@ -26,11 +27,9 @@ requests_headers = {
     'User-Agent':Ua_list.random,
     'Accept':'*/*',
     'Accept-Language': 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2',
-    'Accept-Encoding': 'gzip, deflate, br',
-    'X-CSRFTOKEN': 'emvsAqxIN21BaQo6Iu4fdwuHPPfTab2k',
+    'X-CSRFTOKEN': ''.join(random.sample(seed_list, 32)),
     'X-ANNOTATOR-AUTH-TOKEN': Xtoken_create(),
     'Content-type': 'application/json',
-    'uni-client-ver': '12040',
     'Connection': 'keep-alive',
     'TE': 'Trailers'
 
@@ -43,24 +42,21 @@ def extract_qa(question_obj):
         return (question_obj["content"]["html"], question_obj["answers"])
 
 def Request_get(requests_header,input_url):
-    url_deal = input_url.split('/')
-    target_url = 'https://ucontent.unipus.cn/course/api/content/'+url_deal[5]+'/'+url_deal[-2]+'/default/'
-    content_obj = {}
-    try : 
-        rec_text = requests.get(target_url,headers = requests_header).text
-        rec_obj = json.loads(rec_text)
-        content_obj = json.loads(rec_obj["content"])
-        for (k, v) in sorted(content_obj.items()):
-            for q in v["questions"]:
-                this_q, this_a = extract_qa(q)
-                # Remove HTML tags
-                this_q = re.sub('<[^<]+?>', '', this_q)
-                this_q = this_q.replace('\n', '').strip()
-                print(this_q, ":", this_a)
+    try:
+        url_deal = input_url.split('/')
+        target_url = 'https://ucontent.unipus.cn/course/api/content/'+url_deal[5]+'/'+url_deal[-2]+'/default/'
+        try : 
+            rec_text = requests.get(target_url,headers = requests_header).text
+            answer_sort = re.findall(r'content_(.*?):scoopquestions',rec_text)
+            answer_show(rec_text,answer_sort)
+        except:
+            print('网址输入错误')
+            return
     except:
         if content_obj:
             print(json.dumps(content_obj, indent=2))
         print('网址输入错误')
+        return
 
 def answer_show(answers_text,sort):
     if len(sort) > 1:
@@ -69,24 +65,22 @@ def answer_show(answers_text,sort):
             print('\t    第'+i+'题')
         print('\n请自行判断答案顺序！\n')
     pos = 1
-    text_deal = re.findall(r"answers(.*?):\[(.*?)\],",answers_text)
+    text_deal = re.findall(r"\\\"answers\\\":\[\\\"(.*?)\\\"\]",answers_text)
     if text_deal :
         print("\t----获取成功！----\n")
         for word in text_deal:
-            word = str(word).replace(',', ' ')
-            answers = "".join(re.findall(r"[A-Z0-9a-z -]",word))    
-            check_pos = answers
-            print('\t    '+str(pos)+'题答案'+answers)
+            word = word.replace('"','')
+            answers = "".join(re.findall(r"[A-Z0-9a-z -,]",word))    
+            print('\t    '+str(pos)+'题答案 '+answers)
             pos = pos + 1
     else:
-        text_deal = word_2 = re.findall(r"answer(.*?):\[(.*?)\],",answers_text)
+        text_deal = re.findall(r"\\\"answer\\\":\\\"(.*?)\\\",",answers_text)
         if text_deal :
             print("\t  ----获取成功！---- \n")
             for word in text_deal:
-                word = str(word).replace(',',' ')
-                answers = "".join(re.findall(r"[A-Z0-9a-z -]",word))    
-                check_pos = answers
-                print('\t    '+str(pos)+'题答案'+answers)
+                word = word.replace('"','')
+                answers = "".join(re.findall(r"[A-Z0-9a-z -,]",word))    
+                print('\t    '+str(pos)+'题答案 '+answers)
                 pos = pos + 1
         else:
             #os.system("color 04")
